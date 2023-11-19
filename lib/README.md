@@ -7,3 +7,4 @@
 - [Search algorithms](search)
 
   - [`search/linearSearch.mli`](search/linearSearch.mli), [`search/linearSearch.ml`](search/linearSearch.ml) -- linear search in arrays and lists.
+  - [`search/binarySearch.mli`](search/binarySearch.mli), [`search/binarySearch.ml`](search/binarySearch.ml) -- binary search in arrays.
