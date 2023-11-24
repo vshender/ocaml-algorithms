@@ -1,66 +1,6 @@
+open Algorithms_arith
 open Algorithms_arith.BigNat
 open Util
-
-(* {{{ Util
-   ----------------------------------------------------------------------------
-*)
-
-(** The implementation of [Alcotest.testable] for [BigNat.t]. *)
-let bignat_testable = Alcotest.testable
-    (fun fmt x -> Fmt.string fmt (to_string x))
-    equal
-
-(** [unop_bignat_test f fname x expected] generates a test case that checks
-    that [f x = expected].
-    [x] and [expected] are string representations of big natural numbers.
-
-    Example: [unop_bignat_test succ "succ" "42" "43"]. *)
-let unop_bignat_test f fname x expected =
-  let open Alcotest in
-  test_case
-    (Fmt.str "%s %s" fname x)
-    `Quick
-    (fun () ->
-       let expected = of_string expected in
-       check
-         bignat_testable
-         (Fmt.str "%s %s = %a" fname x (pp bignat_testable) expected)
-         expected
-         (f (of_string x)))
-
-(** [binop_any_test f fname expected_testable x y expected] generates a test
-    case that checks that [f x y = expected].
-    [x] and [y] are string representations of big natural numbers,
-    [expected_testable] is an [Alcotest.testable] for [expected].
-
-    Example: [binop_any_test compare "compare" Alcotest.int "42" "42" 0]. *)
-let binop_any_test f fname expected_testable x y expected =
-  let open Alcotest in
-  test_case
-    (Fmt.str "%s %s %s" fname x y)
-    `Quick
-    (fun () ->
-       check
-         expected_testable
-         (Fmt.str "%s %s %s = %a" fname x y (pp expected_testable) expected)
-         expected
-         (f (of_string x) (of_string y)))
-
-(** [binop_bignat_test f fname x y expected] generates a test case that checks
-    that [f x y = expected].
-    [x], [y], and [expected] are string representations of big natural
-    numbers.
-
-    Example: [binop_bignat_test add "add" "42" "27" "69"]. *)
-let binop_bignat_test f fname x y expected =
-  binop_any_test f fname bignat_testable x y (of_string expected)
-
-(** [is_num s] checks that [s] is a valid representation of a natural
-    number. *)
-let is_num s =
-  String.(length s > 0 && for_all (fun c -> '0' <= c && c <= '9') s)
-
-(* }}} *)
 
 (* {{{ Comparisons
    ----------------------------------------------------------------------------
@@ -68,7 +8,7 @@ let is_num s =
 
 (** Test cases for [compare]. *)
 let compare_tests =
-  let compare_test = binop_any_test compare "compare" Alcotest.int
+  let compare_test = binop_bignum_any_test (module BigNat) compare "compare" Alcotest.int
   in [
     compare_test "0" "0" 0;
     compare_test "0" "1" (-1);
@@ -84,7 +24,7 @@ let compare_tests =
 
 (** Test cases for [equal]. *)
 let equal_tests =
-  let equal_test = binop_any_test equal "equal" Alcotest.bool
+  let equal_test = binop_bignum_any_test (module BigNat) equal "equal" Alcotest.bool
   in [
     equal_test "0" "0" true;
     equal_test "0" "1" false;
@@ -99,7 +39,7 @@ let equal_tests =
 
 (** Test cases for [min]. *)
 let min_tests =
-  let min_test = binop_bignat_test min "min"
+  let min_test = binop_bignum_bignum_test (module BigNat) min "min"
   in [
     min_test "0" "0" "0";
     min_test "0" "1" "0";
@@ -114,7 +54,7 @@ let min_tests =
 
 (** Test cases for [max]. *)
 let max_tests =
-  let max_test = binop_bignat_test max "max"
+  let max_test = binop_bignum_bignum_test (module BigNat) max "max"
   in [
     max_test "0" "0" "0";
     max_test "0" "1" "1";
@@ -161,7 +101,7 @@ let hash_test =
 
 (** Test cases for [add]. *)
 let add_tests =
-  let add_test = binop_bignat_test add "add"
+  let add_test = binop_bignum_bignum_test (module BigNat) add "add"
   in [
     add_test "0" "0" "0";
     add_test "0" "1" "1";
@@ -181,7 +121,7 @@ let add_tests =
 
 (** Test cases for [sub]. *)
 let sub_tests =
-  let sub_test = binop_bignat_test sub "sub"
+  let sub_test = binop_bignum_bignum_test (module BigNat) sub "sub"
   in [
     sub_test "0" "0" "0";
     sub_test "1" "0" "1";
@@ -239,7 +179,7 @@ let sub_and_add_are_inverse_ops_test =
 
 (** Test cases for [mul]. *)
 let mul_tests =
-  let mul_test = binop_bignat_test mul "mul"
+  let mul_test = binop_bignum_bignum_test (module BigNat) mul "mul"
   in [
     mul_test "0" "0" "0";
     mul_test "0" "1" "0";
@@ -355,7 +295,7 @@ let divmod_test_data = [
 
 (** Test cases for [div]. *)
 let div_tests =
-  let div_test = binop_bignat_test div "div"
+  let div_test = binop_bignum_bignum_test (module BigNat) div "div"
   in List.map (fun (x, y, q, _) -> div_test x y q) divmod_test_data
 
 (** Check that dividing any number by zero is an error. *)
@@ -389,7 +329,7 @@ let mul_and_div_are_inverse_ops_test =
 
 (** Test cases for [rem]. *)
 let rem_tests =
-  let rem_test = binop_bignat_test rem "rem"
+  let rem_test = binop_bignum_bignum_test (module BigNat) rem "rem"
   in List.map (fun (x, y, _, r) -> rem_test x y r) divmod_test_data
 
 (** Check that dividing any number by zero is an error. *)
@@ -410,7 +350,9 @@ let rem_fail_test =
 
 (** Test cases for [divmod]. *)
 let divmod_tests =
-  let divmod_test x y (q, r) = binop_any_test
+  let bignat_testable = num_testable (module BigNat) in
+  let divmod_test x y (q, r) = binop_bignum_any_test
+      (module BigNat)
       divmod "divmod"
       (Alcotest.pair bignat_testable bignat_testable)
       x y
@@ -450,7 +392,7 @@ let divmod_and_mul_add_are_inverse_ops_test =
 
 (** Test cases for [succ]. *)
 let succ_tests =
-  let succ_test = unop_bignat_test succ "succ"
+  let succ_test = unop_bignum_bignum_test (module BigNat) succ "succ"
   in [
     succ_test "0" "1";
     succ_test "1" "2";
@@ -466,7 +408,7 @@ let succ_tests =
 
 (** Test cases for [pred]. *)
 let pred_tests =
-  let pred_test = unop_bignat_test pred "pred"
+  let pred_test = unop_bignum_bignum_test (module BigNat) pred "pred"
   in [
     pred_test "1" "0";
     pred_test "2" "1";
@@ -606,7 +548,7 @@ let of_string_fail_test =
     ~print:Print.string
     Gen.string
     (fun s ->
-       assume (not @@ is_num s);
+       assume (not @@ is_nat_num s);
        try
          ignore (of_string s);
          false
@@ -624,7 +566,7 @@ let of_string_opt_fail_test =
     ~print:Print.string
     Gen.string
     (fun s ->
-       assume (not @@ is_num s);
+       assume (not @@ is_nat_num s);
        of_string_opt s = None)
 
 (** Check that [of_string (to_string x) = x]. *)

@@ -4,6 +4,9 @@
 
   - [`arith/bigNat.mli`](arith/bigNat.mli), [`arith/bigNat.ml`](arith/bigNat.ml) -- arbitrary-precision arithmetic on natural numbers.
   - [`arith/bigInt.mli`](arith/bigInt.mli), [`arith/bigInt.ml`](arith/bigInt.ml) -- arbitrary-precision arithmetic on integers.
+  - [`arith/iSqrt.mli`](arith/iSqrt.mli), [`arith/iSqrt.ml`](arith/iSqrt.ml) -- integer square root calculation.
+
+    - Newton's method.
 - [Search algorithms](search)
 
   - [`search/linearSearch.mli`](search/linearSearch.mli), [`search/linearSearch.ml`](search/linearSearch.ml) -- linear search in arrays and lists.
