@@ -7,6 +7,7 @@
   - [`arith/iSqrt.mli`](arith/iSqrt.mli), [`arith/iSqrt.ml`](arith/iSqrt.ml) -- integer square root calculation.
 
     - Newton's method.
+    - Digit-by-digit algorithm.
 - [Search algorithms](search)
 
   - [`search/linearSearch.mli`](search/linearSearch.mli), [`search/linearSearch.ml`](search/linearSearch.ml) -- linear search in arrays and lists.

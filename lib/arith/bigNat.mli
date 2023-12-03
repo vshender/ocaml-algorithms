@@ -110,3 +110,36 @@ val of_string_opt : string -> t option
     digits only, to a big natural number.
     Returns [None] if [s] is not a valid representation of a natural number, or
     [Some x] where [x] is the big natural number. *)
+
+
+(**/**)
+
+(** {1 Internals} *)
+
+(** The [Internals] module provides access to low-level details and operations
+    on big natural numbers.  This module is intended for advanced uses where
+    direct manipulation or access to internal representation is required, such
+    as when implementing custom algorithms that are not provided by the
+    [BigNat] module.
+
+    The main idea is that a big natural number is stored as an array of its
+    digits in some base.  In this implementation, the base is a power of
+    [10]. *)
+module Internals: sig
+  val base : int
+  (** [base] is the base of the number system used in the representation of big
+      natural numbers. *)
+
+  val digits : t -> int array
+  (** [digits x] returns digits of the big natural number [x].  Digits are
+      returned in a little-endian format, with the least significant digit at
+      index [0].  Each digit is less than [base]. *)
+
+  val add_digit : t -> int -> t
+  (** [add_digit x y] adds the integer number [y] to [x].
+      Requires [y < base]. *)
+
+  val mul_digit : t -> int -> t
+  (** [mul_digit x y] multiplies [x] by the integer number [y].
+      Requires [y < base]. *)
+end

@@ -134,3 +134,36 @@ val of_string_opt : string -> t option
 (** [of_string_opt s] converts the string [s] to a big integer.
     Returns [None] if [s] is not a valid representation of an integer, or
     [Some x] where [x] is the big integer. *)
+
+
+(**/**)
+
+(** {1 Internals} *)
+
+(** The [Internals] module provides access to low-level details and operations
+    on big integers.  This module is intended for advanced uses where direct
+    manipulation or access to internal representation is required, such as when
+    implementing custom algorithms that are not provided by the [BigInt]
+    module.
+
+    The main idea is that the magnitude of a big integer is stored as an array
+    of its "digits" in some base.  In this implementation, the base is a power
+    of [10]. *)
+module Internals: sig
+  val base : int
+  (** [base] is the base of the number system used in the representation of
+      magnitude of big integers. *)
+
+  val digits : t -> int array
+  (** [digits x] returns digits of the magnitude of the big integer [x].
+      Digits are returned in a little-endian format, with the least significant
+      digit at index [0].  Each digit is less than [base]. *)
+
+  val add_digit : t -> int -> t
+  (** [add_digit x y] adds the integer number [y] to the magnitude of [x].
+      Requires [y < base]. *)
+
+  val mul_digit : t -> int -> t
+  (** [mul_digit x y] multiplies the magnitude of [x] by the integer number
+      [y].  Requires [y < base]. *)
+end

@@ -251,4 +251,10 @@ let () =
     "newton (int64)", isqrt_int64_tests (ISqrt.newton (module Int64)) "newton";
     "newton (BigNat)", isqrt_bignat_tests (ISqrt.newton (module BigNat)) "newton";
     "newton (BigInt)", isqrt_bigint_tests (ISqrt.newton (module BigInt)) "newton";
+    "digit_by_digit (int)", isqrt_int_tests (ISqrt.(digit_by_digit (module ExtendedInt))) "digit_by_digit";
+    "digit_by_digit (nativeint)", isqrt_nativeint_tests (ISqrt.(digit_by_digit (module ExtendedNativeint))) "digit_by_digit";
+    "digit_by_digit (int32)", isqrt_int32_tests (ISqrt.(digit_by_digit (module ExtendedInt32))) "digit_by_digit";
+    "digit_by_digit (int64)", isqrt_int64_tests (ISqrt.(digit_by_digit (module ExtendedInt64))) "digit_by_digit";
+    "digit_by_digit (BigNat)", isqrt_bignat_tests (ISqrt.(digit_by_digit (module ExtendedBigNat))) "digit_by_digit";
+    "digit_by_digit (BigInt)", isqrt_bigint_tests (ISqrt.(digit_by_digit (module ExtendedBigInt))) "digit_by_digit";
   ]

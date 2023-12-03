@@ -157,3 +157,21 @@ let of_string str =
   | None   -> failwith "of_string"
 
 (* }}} *)
+
+(* {{{ Internals
+   ----------------------------------------------------------------------------
+*)
+
+module Internals = struct
+  let base = BigNat.Internals.base
+
+  let digits { mag; _ } = BigNat.Internals.digits mag
+
+  let add_digit { mag; sign } y =
+    { mag = BigNat.Internals.add_digit mag y; sign }
+
+  let mul_digit { mag; sign } y =
+    { mag = BigNat.Internals.mul_digit mag y; sign }
+end
+
+(* }}} *)

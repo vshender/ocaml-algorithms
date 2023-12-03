@@ -343,3 +343,34 @@ let of_string str =
   | None   -> failwith "of_string"
 
 (* }}} *)
+
+(* {{{ Internals
+   ----------------------------------------------------------------------------
+*)
+
+module Internals = struct
+  let base = base
+
+  let digits { num; len } =
+    let a = Array.make len 0 in
+    Array.blit num 0 a 0 len;
+    a
+
+  let add_digit x y =
+    let num = Array.make (x.len + 1) 0 in
+    Array.blit x.num 0 num 0 x.len;
+
+    let rec add_iter i carry =
+      if i <= x.len && carry > 0 then
+        let sum = num.(i) + carry in
+        num.(i) <- sum mod base;
+        add_iter (i + 1) (sum / base)
+    in
+    add_iter 0 y;
+
+    normalize { num; len = x.len + 1 }
+
+  let mul_digit = mul_by_int
+end
+
+(* }}} *)

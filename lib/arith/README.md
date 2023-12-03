@@ -5,3 +5,4 @@
 - [`iSqrt.mli`](iSqrt.mli), [`iSqrt.ml`](iSqrt.ml) -- integer square root calculation.
 
   - Newton's method.
+  - Digit-by-digit algorithm.
